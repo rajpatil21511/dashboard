@@ -1,26 +1,19 @@
-apiVersion: tekton.dev/v1beta1
-kind: Task
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: hello
+  name: nginx-deployment
 spec:
-  params:
-    - name: greeting
-      default: Hello World
-  steps:
-    - name: echo
-      image: alpine
-      script: |
-        #!/bin/sh
-        echo "$(params.greeting)"
----
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: goodbye
-spec:
-  steps:
-    - name: echo
-      image: alpine
-      script: |
-        #!/bin/sh
-        echo "Goodbye World!"
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80

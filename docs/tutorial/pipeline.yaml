@@ -1,20 +1,19 @@
 apiVersion: tekton.dev/v1beta1
 kind: Deployment
 metadata:
-  name: hello-goodbye
+  name: nginx-deployment
 spec:
-  params:
-    - name: hello-greeting
-      default: Hello from a Pipeline
-  tasks:
-    - name: hello
-      taskRef:
-        name: hello
-      params:
-        - name: greeting
-          value: "$(params.hello-greeting)"
-    - name: goodbye
-      runAfter:
-        - hello
-      taskRef:
-        name: goodbye
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
